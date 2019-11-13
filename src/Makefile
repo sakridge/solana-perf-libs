@@ -14,6 +14,7 @@ include gpu-common.mk
 
 CHACHA_TEST_BIN=cuda_chacha_test
 ECC_TEST_BIN=cuda_ed25519_verify
+RS_TEST_BIN=cuda_reed_solomon_test
 LIB=cuda-crypt
 
 CUDA_HEADER_DIR:=cuda-headers
@@ -21,7 +22,7 @@ CUDA_SHA256_DIR:=cuda-sha256
 
 CFLAGS+=-DENDIAN_NEUTRAL -DLTC_NO_ASM -I$(CUDA_HEADER_DIR) -I$(CUDA_SHA256_DIR)
 
-all: $V/$(CHACHA_TEST_BIN) $V/$(ECC_TEST_BIN) $(V)/lib$(LIB).so
+all: $V/$(RS_TEST_BIN) $V/$(CHACHA_TEST_BIN) $V/$(ECC_TEST_BIN) $(V)/lib$(LIB).so
 
 ECC_DIR:=cuda-ecc-ed25519
 
@@ -39,6 +40,8 @@ SIGN_SRCS:=$(addprefix $(ECC_DIR)/,sign.cu sha512.h ge.h sc.h fe.cu ../$(CUDA_HE
 $V/sign.o: $(SIGN_SRCS)
 	@mkdir -p $(@D)
 	$(NVCC) -rdc=true $(CFLAGS) -c $< -o $@
+
+
 
 VERIFY_SRCS:=$(addprefix $(ECC_DIR)/,verify.cu sha512.cu ge.cu sc.cu fe.cu keypair.cu common.cu ed25519.h)
 $V/verify.o: $(VERIFY_SRCS)
@@ -69,13 +72,23 @@ $V/poh_verify.o: $(POH_SRCS)
 	@mkdir -p $(@D)
 	$(NVCC) -rdc=true $(CFLAGS) -c $< -o $@
 
-CPU_GPU_OBJS=$(addprefix $V/,chacha_cbc.o aes_cbc.o verify.o poh_verify.o gpu_ctx.o sign.o seed.o keypair.o)
+RS_DIR=cuda-reed-solomon
+RS_SRCS:=$(addprefix $(RS_DIR)/,reed_solomon.cu)
+$V/reed_solomon.o: $(RS_SRCS)
+	@mkdir -p $(@D)
+	$(NVCC) -rdc=true $(CFLAGS) -c $< -o $@
+
+
+CPU_GPU_OBJS=$(addprefix $V/,chacha_cbc.o aes_cbc.o verify.o poh_verify.o gpu_ctx.o sign.o seed.o keypair.o reed_solomon.o)
 
 $V/crypt-dlink.o: $(CPU_GPU_OBJS)
 	$(NVCC) -Xcompiler "-fPIC" $(CFLAGS) --device-link $^ --output-file $@
 
 $V/lib$(LIB).so: $V/crypt-dlink.o $(CPU_GPU_OBJS)
 	$(NVCC) -Xcompiler "-fPIC" --shared --output-file $@ $^
+
+$V/$(RS_TEST_BIN): $(RS_DIR)/main.cu $V/lib$(LIB).so
+	$(NVCC) $(CFLAGS) -L$V -l$(LIB) $< -o $@
 
 $V/$(CHACHA_TEST_BIN): $(CHACHA_DIR)/test.cu $V/lib$(LIB).so
 	$(NVCC) $(CFLAGS) -L$V -l$(LIB) $< -o $@
