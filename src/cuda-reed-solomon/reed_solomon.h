@@ -4,8 +4,8 @@
 #include <inttypes.h>
 
 typedef struct {
-    size_t data_shards;
-    size_t parity_shards;
+    size_t num_data;
+    size_t num_coding;
     uint8_t* matrix;
 } rs_context;
 
