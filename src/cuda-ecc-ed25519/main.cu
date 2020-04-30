@@ -7,6 +7,9 @@
 #include "gpu_common.h"
 #include "gpu_ctx.h"
 
+#include "sc.h"
+#include "ge.h"
+
 #define USE_CLOCK_GETTIME
 #include "perftime.h"
 
@@ -96,6 +99,21 @@ static void ed25519_free(void* ptr) {
 int main(int argc, const char* argv[]) {
     int arg;
     bool verbose = false;
+    /*uint8_t scalar[32] = {10, 64, 2, 1, 31, 19, 222, 129,
+         33, 32, 35, 29, 11, 22, 21, 1,
+          33, 32, 35, 29, 11, 22, 21, 1,
+           33, 32, 35, 29, 11, 22, 21, 1};
+    scalar32_reduce(scalar);
+    for (int i = 0; i < 32; i++) {
+        printf("%d ", scalar[i]);
+    }
+    return 0;*/
+    uint8_t sig[64] = {188, 0, 42, 20, 204, 2, 136, 205, 100, 249, 53, 31, 21, 77, 222, 117, 236, 6, 138, 57, 156, 95, 175, 59, 42, 145, 130, 30, 65, 201, 108, 36, 198, 251, 110, 182, 7, 142, 41, 64, 188, 69, 40, 166, 77, 187, 118, 234, 2, 153, 130, 4, 249, 51, 223, 223, 4, 165, 48, 198,220, 27, 206, 6};
+    ge_p3 sig_R;
+    printf("ge_frombytes: %d\n", ge_frombytes_negate_vartime(&sig_R, sig));
+    return 0;
+
+
     for (arg = 1; arg < argc; arg++) {
         if (0 == strcmp(argv[arg], "-v")) {
             verbose = true;
