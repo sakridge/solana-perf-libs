@@ -213,9 +213,13 @@ void __host__ __device__ montgomery_reduce(scalar32_u52_t s, uint128_t r[9]) {
 void __host__ __device__ scalar32_reduce(unsigned char *s) {
     scalar32_u52_t s_u52;
     scalar32_unpack(s_u52, s);
+    printf("unpack: %lx %lx\n", s_u52[0], s_u52[1]);
 
     uint128_t s_R[9];
     scalar52_mul(s_R, s_u52, R_scalar_u52);
+    for (int i = 0; i < 9; i++) {
+      printf(" %d %lx%lx\n", i, s_R[i].high, s_R[i].low);
+    }
 
     scalar32_u52_t s_R_mod_l;
     montgomery_reduce(s_R_mod_l, s_R);
