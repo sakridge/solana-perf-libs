@@ -65,15 +65,37 @@ get_checked_scalar(unsigned char* scalar, const unsigned char* signature) {
         for (int i = 0; i < 32; i++) {
             scalar[i] = signature[i];
         }
+        printf("get_scalar: signature[31] & 240 == 0\n");
         return 0;
     }
 
     if ((signature[31] >> 7) != 0) {
+        printf("high bit set\n");
         return 1;
     }
 
+    for (int i = 0; i < 32; i++) {
+        scalar[i] = signature[i];
+    }
+    for (int i = 0; i < 32; i++) {
+        printf("%d, ", scalar[i]);
+    }
+    printf("\n");
+
     scalar32_reduce(scalar);
     if (!consttime_equal(scalar, signature)) {
+        printf("not equal:\n");
+        printf("scalar:");
+        for (int i = 0; i < 32; i++) {
+            printf("%d, ", scalar[i]);
+        }
+        printf("\n");
+        printf("signature:");
+        for (int i = 0; i < 32; i++) {
+            printf("%d, ", signature[i]);
+        }
+        printf("\n");
+
         return 1;
     }
     return 0;
@@ -138,6 +160,7 @@ ed25519_verify_device(const unsigned char *signature,
     ge_tobytes(checker, &R);
 
     if (!consttime_equal(checker, signature)) {
+        printf("checker != signature\n");
         return 0;
     }
 

@@ -99,20 +99,22 @@ static void ed25519_free(void* ptr) {
 int main(int argc, const char* argv[]) {
     int arg;
     bool verbose = false;
-    /*uint8_t scalar[32] = {10, 64, 2, 1, 31, 19, 222, 129,
-         33, 32, 35, 29, 11, 22, 21, 1,
-          33, 32, 35, 29, 11, 22, 21, 1,
-           33, 32, 35, 29, 11, 22, 21, 1};
+    /*
+    uint8_t scalar[32] = {133, 120, 152, 44, 48, 113, 245, 205, 135, 193, 57, 195, 23, 164, 136, 176, 100, 161, 189,137, 116, 166, 74, 18, 228, 16, 121, 109, 250, 121, 129, 15};
     scalar32_reduce(scalar);
     for (int i = 0; i < 32; i++) {
         printf("%d ", scalar[i]);
     }
-    return 0;*/
-    uint8_t sig[64] = {188, 0, 42, 20, 204, 2, 136, 205, 100, 249, 53, 31, 21, 77, 222, 117, 236, 6, 138, 57, 156, 95, 175, 59, 42, 145, 130, 30, 65, 201, 108, 36, 198, 251, 110, 182, 7, 142, 41, 64, 188, 69, 40, 166, 77, 187, 118, 234, 2, 153, 130, 4, 249, 51, 223, 223, 4, 165, 48, 198,220, 27, 206, 6};
-    ge_p3 sig_R;
-    printf("ge_frombytes: %d\n", ge_frombytes_negate_vartime(&sig_R, sig));
+    printf("\n");
     return 0;
-
+    */
+    /*
+    uint8_t sig[64] = {237, 161, 37, 57, 215, 18, 173, 22, 82, 218, 110, 55, 81, 0, 223, 207, 212, 20, 11, 179, 235, 129, 160, 143, 251, 189, 164, 158, 92, 178, 13, 84, 145, 64, 107, 80, 9, 101, 191, 136, 100, 84, 149, 7, 161, 250, 199, 163, 244, 82, 153, 97, 22, 200, 59, 147, 64, 123, 164, 2, 2, 61, 254, 6};
+    uint8_t message[10] = {};
+    uint8_t pubkey[32] = {};
+    printf("verify: %d\n", ed25519_verify(sig, message, 10, pubkey));
+    return 0;
+    */
 
     for (arg = 1; arg < argc; arg++) {
         if (0 == strcmp(argv[arg], "-v")) {
@@ -307,7 +309,11 @@ int main(int argc, const char* argv[]) {
 
         int ret = ed25519_verify(packet->signature, message_h, message_h_len, packet->public_key);
         if (ret != 1) {
-            fprintf(stderr, "Invalid signature!\n");
+            for (int i = 0; i < 64; i++) {
+                printf("%d, ", packet->signature[i]);
+            }
+            printf("\n");
+            fprintf(stderr, "Invalid signature x!\n");
             exit(1);
         }
     }

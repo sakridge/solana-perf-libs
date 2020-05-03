@@ -166,6 +166,10 @@ int __device__ __host__ ge_frombytes_negate_vartime(ge_p3 *h, const unsigned cha
         fe_add(check, vxx, u); /* vx^2+u */
 
         if (fe_isnonzero(check)) {
+            printf("fe nonzero:\n");
+            for (int i = 0; i < 10; i++) {
+                printf("%x ", check[i]);
+            }
             return -1;
         }
 
