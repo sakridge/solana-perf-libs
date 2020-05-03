@@ -69,33 +69,16 @@ get_checked_scalar(unsigned char* scalar, const unsigned char* signature) {
         return 0;
     }
 
+    // Check for high bit set
     if ((signature[31] >> 7) != 0) {
-        printf("high bit set\n");
         return 1;
     }
 
     for (int i = 0; i < 32; i++) {
         scalar[i] = signature[i];
     }
-    for (int i = 0; i < 32; i++) {
-        printf("%d, ", scalar[i]);
-    }
-    printf("\n");
-
     scalar32_reduce(scalar);
     if (!consttime_equal(scalar, signature)) {
-        printf("not equal:\n");
-        printf("scalar:");
-        for (int i = 0; i < 32; i++) {
-            printf("%d, ", scalar[i]);
-        }
-        printf("\n");
-        printf("signature:");
-        for (int i = 0; i < 32; i++) {
-            printf("%d, ", signature[i]);
-        }
-        printf("\n");
-
         return 1;
     }
     return 0;
@@ -138,14 +121,17 @@ ed25519_verify_device(const unsigned char *signature,
 
     // Check that s.reduce() == s
     if (0 != get_checked_scalar(checker, signature + 32)) {
+        //printf("bad scalar\n");
         return 0;
     }
 
     if (0 == is_packed_ge_small_order(signature)) {
+        //printf("R as group elem is not small order");
         return 0;
     }
 
     if (0 != ge_frombytes_negate_vartime(&A, public_key)) {
+        //printf("public_key\n");
         return 0;
     }
 
@@ -160,7 +146,7 @@ ed25519_verify_device(const unsigned char *signature,
     ge_tobytes(checker, &R);
 
     if (!consttime_equal(checker, signature)) {
-        printf("checker != signature\n");
+        //printf("checker != signature\n");
         return 0;
     }
 
