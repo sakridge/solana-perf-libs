@@ -182,6 +182,19 @@ int __device__ __host__ ge_frombytes_negate_vartime(ge_p3 *h, const unsigned cha
 
 // x = 1, y = 0, z = 0, t = 1
 int __host__ __device__ ge_is_identity(ge_p3* p) {
+    if (fe_is_1(p->X)) {
+        printf("x is 1\n");
+    }
+    if (fe_is_0(p->Y)) {
+        printf("y is 1\n");
+    }
+    if (fe_is_0(p->Z)) {
+        printf("y is 0\n");
+    }
+    if (fe_is_1(p->T)) {
+        printf("T is 1\n");
+    }
+
     return (fe_is_1(p->X) &&
             fe_is_0(p->Y) &&
             fe_is_0(p->Z) &&
