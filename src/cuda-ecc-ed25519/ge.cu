@@ -170,6 +170,7 @@ int __device__ __host__ ge_frombytes_negate_vartime(ge_p3 *h, const unsigned cha
             for (int i = 0; i < 10; i++) {
                 printf("%x ", check[i]);
             }
+            printf("\n");
             return -1;
         }
 
@@ -181,6 +182,7 @@ int __device__ __host__ ge_frombytes_negate_vartime(ge_p3 *h, const unsigned cha
     }
 
     fe_mul(h->T, h->X, h->Y);
+    printf("good ge\n");
     return 0;
 }
 
