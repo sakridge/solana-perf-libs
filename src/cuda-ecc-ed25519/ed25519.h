@@ -77,7 +77,7 @@ int cuda_host_unregister(void* ptr);
 
 int ED25519_DECLSPEC ed25519_get_checked_scalar(unsigned char* out_scalar, const unsigned char* in_scalar);
 
-int ED25519_DECLSPEC ed25519_is_packed_ge_small_order(unsigned char* packed_group_element);
+int ED25519_DECLSPEC ed25519_is_packed_ge_small_order(const unsigned char* packed_group_element);
 
 #ifdef __cplusplus
 }
